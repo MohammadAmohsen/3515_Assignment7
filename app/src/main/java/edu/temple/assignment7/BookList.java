@@ -1,10 +1,19 @@
 package edu.temple.assignment7;
 
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
-public class BookList {
-    private List<Book> BookList;
+public class BookList extends ArrayList<Parcelable> {
+    private ArrayList<Book> BookList;
+
+    public BookList(){
+        BookList = new ArrayList<Book>();
+    }
 
     public void add(Book book)
     {
@@ -24,5 +33,11 @@ public class BookList {
     public int size()
     {
         return BookList.size();
+    }
+
+    @NonNull
+    @Override
+    public Stream<Parcelable> stream() {
+        return null;
     }
 }
