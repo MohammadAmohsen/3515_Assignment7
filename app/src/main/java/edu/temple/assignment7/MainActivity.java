@@ -8,7 +8,7 @@ import android.os.Bundle;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BookListFragment.BookListFragmentInterface {
     BookList bookList;
 
     @Override
@@ -32,7 +32,16 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.mainActivityID,BookListFragment.newInstance(bookList))
-                .commit();
+                 .commit();
 
+    }
+
+    @Override
+    public void bookClicked(int position) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.mainActivityID,BookDetailsFragment.newInstance(bookList.get(position)))
+                .addToBackStack(null)
+                .commit();
     }
 }
