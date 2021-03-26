@@ -47,7 +47,7 @@ public class BookAdapter extends ArrayAdapter {
         }
         else{
             ll = (LinearLayout) convertView;
-            textView = (TextView) ll.getChildAt(1);
+            textView = (TextView) ll.getChildAt(0);
             textViewAuthor = (TextView)ll.getChildAt(1);
 
 

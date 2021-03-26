@@ -7,9 +7,11 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     int position1;
     BookDetailsFragment bookDetailsFragment;
     Context context;
+    String bookBook;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +45,13 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         bookList.add(new Book("Don Quixote","Miguel de Cervantes"));
         bookList.add(new Book("The Golden Compass","Philip Pullman"));
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.mainActivityID,BookListFragment.newInstance(bookList))
-                 .commit();
+             getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.mainActivityID,BookListFragment.newInstance(bookList))
+                    .commit();
 
-        if(bookDetailsPresent){
+          if(bookDetailsPresent){
             bookDetailsFragment = new BookDetailsFragment();
-
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.mainActivityID2, bookDetailsFragment)
@@ -58,9 +60,10 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         }
 
         if(savedInstanceState != null){
-            String bookPosition = String.valueOf(bookList.get(position1));
-            count = savedInstanceState.getParcelable(bookPosition);
-         }
+            String bookPosition =  String.valueOf(bookList.get(position1));
+            count = savedInstanceState.getParcelable(bookBook);
+
+        }
 
     }
 
@@ -77,7 +80,9 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         else{
             position1 =  position;
             bookDetailsFragment.changeBook(bookList.get(position));
+            bookBook = String.valueOf(bookList.get(position));
         }
+
     }
 
     @Override
@@ -85,5 +90,6 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         super.onSaveInstanceState(outState);
         outState.putParcelable("param1", count);
     }
+
 
 }
