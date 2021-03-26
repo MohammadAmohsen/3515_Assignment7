@@ -53,8 +53,9 @@ public class BookDetailsFragment extends Fragment {
          return view;
     }
 
-    private void changeBook(Book book){
+    void changeBook(Book book){
         tvTitle.setText(book.getTitle());
         tvAuthor.setText(book.getAuthor());
+
     }
 }

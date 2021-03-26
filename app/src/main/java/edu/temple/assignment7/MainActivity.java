@@ -1,20 +1,33 @@
 package edu.temple.assignment7;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements BookListFragment.BookListFragmentInterface {
     BookList bookList;
+    boolean bookDetailsPresent;
+    Parcelable count;
+    int position1;
+    BookDetailsFragment bookDetailsFragment;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        bookDetailsPresent = findViewById(R.id.mainActivityID2) != null;
 
          bookList = new BookList();
 
@@ -31,17 +44,46 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.mainActivityID,BookListFragment.newInstance(bookList))
+                .replace(R.id.mainActivityID,BookListFragment.newInstance(bookList))
                  .commit();
+
+        if(bookDetailsPresent){
+            bookDetailsFragment = new BookDetailsFragment();
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.mainActivityID2, bookDetailsFragment)
+                    .commit();
+
+        }
+
+        if(savedInstanceState != null){
+            String bookPosition = String.valueOf(bookList.get(position1));
+            count = savedInstanceState.getParcelable(bookPosition);
+         }
 
     }
 
     @Override
     public void bookClicked(int position) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.mainActivityID,BookDetailsFragment.newInstance(bookList.get(position)))
-                .addToBackStack(null)
-                .commit();
+        if(!bookDetailsPresent) {
+            position1 =  position;
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.mainActivityID, BookDetailsFragment.newInstance(bookList.get(position)))
+                    .addToBackStack(null)
+                    .commit();
+        }
+        else{
+            position1 =  position;
+            bookDetailsFragment.changeBook(bookList.get(position));
+        }
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("param1", count);
+    }
+
 }

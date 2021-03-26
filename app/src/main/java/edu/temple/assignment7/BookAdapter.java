@@ -31,9 +31,7 @@ public class BookAdapter extends ArrayAdapter {
             textView.setTextSize(22);
             textView.setPadding(15,20,0,20);
 
-            textViewAuthor = new TextView(context);
-            textViewAuthor.setTextSize(12);
-            textViewAuthor.setPadding(15,20,0,20);
+
             }
         else{
             textView = (TextView) convertView;
