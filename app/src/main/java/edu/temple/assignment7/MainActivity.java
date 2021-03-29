@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     String bookBook;
 
     @Override
+    //Test
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
