@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
          bookList = new BookList();
 
+         /*
         bookList.add(new Book("Harry Potter","J.K Rowling"));
         bookList.add(new Book("The Lord of the Rings","J.R.R. Tolkien"));
         bookList.add(new Book("War and Peace","Leo Tolstoy"));
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         bookList.add( new Book("The Satanic Verses"," Salman Rushdie"));
         bookList.add(new Book("Don Quixote","Miguel de Cervantes"));
         bookList.add(new Book("The Golden Compass","Philip Pullman"));
-
+        */
              getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.mainActivityID,BookListFragment.newInstance(bookList))

@@ -6,20 +6,26 @@ import android.os.Parcelable;
 public class Book implements Parcelable {
     private String title;
     private String author;
-
+    private int id;
+    private String coverURL;
     public Book()
     {
     };
 
-    public Book(String title, String author)
+    public Book(String title, String author, int id, String coverURL)
     {
         this.title = title;
         this.author = author;
+        this.id = id;
+        this.coverURL = coverURL;
+
     }
 
     protected Book(Parcel in) {
         title = in.readString();
         author = in.readString();
+        id = in.readInt();
+        coverURL = in.readString();
     }
 
     public static final Creator<Book> CREATOR = new Creator<Book>() {
