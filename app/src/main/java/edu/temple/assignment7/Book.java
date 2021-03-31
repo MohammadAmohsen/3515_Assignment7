@@ -60,6 +60,26 @@ public class Book implements Parcelable {
         return this.author = author;
     }
 
+    public int getID()
+    {
+        return id;
+    }
+
+    public int setID()
+    {
+        return this.id = id;
+    }
+
+    public String getCoverURL()
+    {
+        return coverURL;
+    }
+
+    public String setCoverURL()
+    {
+        return this.coverURL = coverURL;
+    }
+
     @Override
     public int describeContents() {
         return 0;

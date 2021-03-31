@@ -10,7 +10,14 @@
         android:id="@+id/mainActivityID"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="2"/>
+        android:layout_weight="2">
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="496dp"
+            android:layout_height="150dp"
+            android:text="Search" />
+    </FrameLayout>
     <FrameLayout
         android:id="@+id/mainActivityID2"
         android:layout_width="0dp"

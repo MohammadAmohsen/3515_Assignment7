@@ -11,6 +11,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -24,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     BookDetailsFragment bookDetailsFragment;
     Context context;
     String bookBook;
-
+    Button search;
     @Override
     //Test
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +37,17 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
         bookDetailsPresent = findViewById(R.id.mainActivityID2) != null;
 
+        search = findViewById(R.id.button2);
          bookList = new BookList();
+
+         search.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 Intent launchIntent = new Intent(MainActivity.this, BookSearchActivity.class);
+                 startActivity(launchIntent);
+
+              }
+         });
 
          /*
         bookList.add(new Book("Harry Potter","J.K Rowling"));
@@ -69,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
     }
 
+
+
     @Override
     public void bookClicked(int position) {
         if(!bookDetailsPresent) {
@@ -95,3 +111,4 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
 
 }
+
