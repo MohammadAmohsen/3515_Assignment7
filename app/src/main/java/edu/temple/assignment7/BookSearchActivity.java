@@ -53,25 +53,28 @@ public class BookSearchActivity extends AppCompatActivity {
     int ID;
     Book b;
 
-
     Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             try {
-                JSONArray jsonArray = new JSONArray((String) msg.obj);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    // Intent launchIntent = new Intent(BookSearchActivity.this, MainActivity.class);
-                    //startActivity(launchIntent);
+                    JSONArray jsonArray = new JSONArray((String) msg.obj);
+                Intent launchIntent = new Intent(BookSearchActivity.this, MainActivity.class);
 
-                    ID = jsonObject.getInt("id");
-                    Title = jsonObject.getString("title");
-                    Author = jsonObject.getString("author");
-                    CoverURL = jsonObject.getString("cover_url");
-                    b = new Book(Title, Author, ID, CoverURL);
-                }
+                for(int i = 0; i < jsonArray.length(); i++) {
+                        // Intent launchIntent = new Intent(BookSearchActivity.this, MainActivity.class);
+                        //startActivity(launchIntent);
+                        JSONObject jsonObject = (JSONObject) jsonArray.get(i);
 
+                        ID = jsonObject.getInt("id");
+                        Title = jsonObject.getString("title");
+                        Author = jsonObject.getString("author");
+                        CoverURL = jsonObject.getString("cover_url");
+                        bookList.add( new Book(Title, Author, ID, CoverURL));
+                    }
 
+                launchIntent.putExtra("Books", bookList);
+
+                 startActivity(launchIntent);
                 //b.get
                 /*
                // getSupportFragmentManager()
@@ -141,7 +144,7 @@ public class BookSearchActivity extends AppCompatActivity {
 
                 // setContentView(R.layout.activity_main);
                 //count++;
-                //finish();
+                finish();
 
                 // Intent launchIntent = new Intent(BookSearchActivity.this, MainActivity.class);
                 //launchIntent.putExtra("Title", b.getTitle());

@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     Parcelable count;
     BookDetailsFragment bookDetailsFragment;
     private final String KEY_SELECTED_BOOK = "selectedBook";
-    Button search;
+    Button btnSearch;
     FragmentManager fm;
     Book selectedBook;
 
@@ -50,10 +50,10 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
                     .add(R.id.mainActivityID, BookListFragment.newInstance(bookList))
                     .commit();
 
-        search = findViewById(R.id.btnSearch);
+        btnSearch = findViewById(R.id.btnSearch);
 
 
-        search.setOnClickListener(new View.OnClickListener() {
+        btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent launchIntent = new Intent(MainActivity.this, BookSearchActivity.class);
