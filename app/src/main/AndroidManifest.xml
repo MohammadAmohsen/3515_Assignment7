@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="edu.temple.assignment7">
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -11,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Assignment7">
-        <activity android:name=".BookSearchActivity"></activity>
+        <activity android:name=".BookSearchActivity"
+            android:theme="@style/Theme.AppCompat.Dialog.Alert">
+        </activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

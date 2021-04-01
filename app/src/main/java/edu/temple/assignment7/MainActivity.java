@@ -3,7 +3,9 @@ package edu.temple.assignment7;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,6 +31,11 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     Context context;
     String bookBook;
     Button search;
+    FragmentManager fm;
+    Fragment current1;
+    Fragment current2;
+    Book book;
+
     @Override
     //Test
     protected void onCreate(Bundle savedInstanceState) {
