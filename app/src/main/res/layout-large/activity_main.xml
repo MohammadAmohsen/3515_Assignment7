@@ -13,9 +13,9 @@
         android:layout_weight="2">
 
         <Button
-            android:id="@+id/button2"
-            android:layout_width="496dp"
-            android:layout_height="150dp"
+            android:id="@+id/btnSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="Search" />
     </FrameLayout>
     <FrameLayout

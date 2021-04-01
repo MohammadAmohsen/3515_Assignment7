@@ -32,6 +32,10 @@ public class BookSearchActivity extends AppCompatActivity {
 
     BookList bookList = new BookList();
     Context c;
+    EditText etSearch;
+    Button btnCancel;
+    Button btnSearch;
+
     Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
@@ -58,11 +62,53 @@ public class BookSearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_book_search);
+
+        etSearch = findViewById(R.id.etSearch);
+        btnCancel = findViewById(R.id.btnCancel);
+        btnSearch = findViewById(R.id.btnSearch);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            String urlString = "https://kamorris.com/lab/cis3515/search.php?term=Great%20Expectations";
+                            URL url = new URL(urlString);
+                            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+
+                            Message msg = Message.obtain();
+                            StringBuilder sb = new StringBuilder();
+                            String tmpString;
+
+                            while((tmpString = br.readLine()) != null){
+                                sb.append(tmpString);
+                            }
+                            msg.obj = sb.toString();
+                            handler.sendMessage(msg);
+                            // msg.obj = br.readLine();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+                finish();
+            }
+        });
         //Book book = new Book();
 
 
-
+/*
         final EditText prompt = new EditText(this);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Search");
@@ -110,7 +156,7 @@ public class BookSearchActivity extends AppCompatActivity {
 
         //btnSearch = findViewById(R.id.btnSearch);
         //etSearch = findViewById(R.id.etSearch);
-
+*/
 /*
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,42 +184,6 @@ public class BookSearchActivity extends AppCompatActivity {
 */
 
 
-    /*
-    public class FireMissilesDialogFragment extends DialogFragment {
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the Builder class for convenient dialog construction
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("Hi")
-                    .setPositiveButton("Search", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // FIRE ZE MISSILES!
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // User cancelled the dialog
-                        }
-                    });
-            // Create the AlertDialog object and return it
-            AlertDialog alert11 = builder.create();
-            alert11.show();
-
-            return builder.create();
-        }
-    }
-*/
     }
 
-/*
-    private String sanitizeURL(String url) {
-        if (url.startsWith("http")) {
-            return url;
-        } else {
-            etSearch.setText("https://" + url);
-            return "https://" + url;
-        }
-    }
-
- */
 }

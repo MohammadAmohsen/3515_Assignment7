@@ -1,26 +1,15 @@
 package edu.temple.assignment7;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.os.PersistableBundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.SearchView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements BookListFragment.BookListFragmentInterface {
     BookList bookList;
@@ -44,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
         bookDetailsPresent = findViewById(R.id.mainActivityID2) != null;
 
-        search = findViewById(R.id.button2);
+        search = findViewById(R.id.btnSearch);
          bookList = new BookList();
 
          search.setOnClickListener(new View.OnClickListener() {
