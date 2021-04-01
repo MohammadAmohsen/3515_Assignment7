@@ -47,29 +47,29 @@ public class BookSearchActivity extends AppCompatActivity {
     EditText etSearch;
     Button btnCancel;
     Button btnSearch;
-     String Title;
+    String Title;
     String Author;
     String CoverURL;
     int ID;
     Book b;
 
-/*
+
     Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
-            try{
+            try {
                 JSONArray jsonArray = new JSONArray((String) msg.obj);
-                 for(int i = 0; i < jsonArray.length(); i++) {
-                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                     // Intent launchIntent = new Intent(BookSearchActivity.this, MainActivity.class);
-                     //startActivity(launchIntent);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    // Intent launchIntent = new Intent(BookSearchActivity.this, MainActivity.class);
+                    //startActivity(launchIntent);
 
-                     ID = jsonObject.getInt("id");
-                     Title = jsonObject.getString("title");
-                     Author = jsonObject.getString("author");
-                     CoverURL = jsonObject.getString("cover_url");
-                      b = new Book(Title, Author, ID, CoverURL);
-                 }
+                    ID = jsonObject.getInt("id");
+                    Title = jsonObject.getString("title");
+                    Author = jsonObject.getString("author");
+                    CoverURL = jsonObject.getString("cover_url");
+                    b = new Book(Title, Author, ID, CoverURL);
+                }
 
 
                 //b.get
@@ -80,18 +80,17 @@ public class BookSearchActivity extends AppCompatActivity {
                       //  .commit();
 
                // textView.setText((String)msg.obj);
+                */
 
 
-
-            }
-            catch (JSONException e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
             return false;
         }
     });
 
-*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,8 +113,49 @@ public class BookSearchActivity extends AppCompatActivity {
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    String urlString = "https://kamorris.com/lab/cis3515/search.php?term=" +  etSearch.getText().toString();
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
 
+                            String urlString = "https://kamorris.com/lab/cis3515/search.php?term=" + etSearch.getText().toString();
+                            URL url = new URL(urlString);
+                            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+
+                            Message msg = Message.obtain();
+                            StringBuilder sb = new StringBuilder();
+                            String tmpString;
+
+                            while ((tmpString = br.readLine()) != null) {
+                                sb.append(tmpString);
+                            }
+                            msg.obj = sb.toString();
+                            handler.sendMessage(msg);//Message(msg);
+                            // msg.obj = br.readLine();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+
+                // setContentView(R.layout.activity_main);
+                //count++;
+                //finish();
+
+                // Intent launchIntent = new Intent(BookSearchActivity.this, MainActivity.class);
+                //launchIntent.putExtra("Title", b.getTitle());
+                // launchIntent.putExtra("Author", b.getAuthor());
+                // launchIntent.putExtra("ID", b.getID());
+                // launchIntent.putExtra("CoverURL", b.getCoverURL());
+
+
+            }
+        });
+    }
+}
+        // String urlString = "https://kamorris.com/lab/cis3515/search.php?term=" +  etSearch.getText().toString();
+                    /*
                     JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlString, null, new Response.Listener<JSONArray>() {
                         @Override
                         public void onResponse(JSONArray response) {
@@ -147,10 +187,9 @@ public class BookSearchActivity extends AppCompatActivity {
                         }
                     });
                     requestQueue.add(jsonArrayRequest);
-                };
-            });
-        }
-    }
+                    */
+
+
 
 
 
