@@ -12,12 +12,22 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,31 +36,52 @@ import java.io.InputStreamReader;
 import java.net.HttpCookie;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 
 public class BookSearchActivity extends AppCompatActivity {
 
+    RequestQueue requestQueue;
+
     BookList bookList = new BookList();
-    Context c;
     EditText etSearch;
     Button btnCancel;
     Button btnSearch;
+     String Title;
+    String Author;
+    String CoverURL;
+    int ID;
+    Book b;
 
+/*
     Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             try{
-                JSONObject jsonObject = new JSONObject((String) msg.obj);
-                int ID = jsonObject.getInt("id");
-                String Title = jsonObject.getString("title");
-                String Author = jsonObject.getString("author");
-                String CoverURL = jsonObject.getString("cover_url");
-                bookList.add(new Book(Title, Author, ID, CoverURL));
+                JSONArray jsonArray = new JSONArray((String) msg.obj);
+                 for(int i = 0; i < jsonArray.length(); i++) {
+                     JSONObject jsonObject = jsonArray.getJSONObject(i);
+                     // Intent launchIntent = new Intent(BookSearchActivity.this, MainActivity.class);
+                     //startActivity(launchIntent);
 
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.mainActivityID,BookListFragment.newInstance(bookList))
-                        .commit();
+                     ID = jsonObject.getInt("id");
+                     Title = jsonObject.getString("title");
+                     Author = jsonObject.getString("author");
+                     CoverURL = jsonObject.getString("cover_url");
+                      b = new Book(Title, Author, ID, CoverURL);
+                 }
+
+
+                //b.get
+                /*
+               // getSupportFragmentManager()
+                       // .beginTransaction()
+                       // .add(R.id.textView,BookListFragment.newInstance(bookList))
+                      //  .commit();
+
+               // textView.setText((String)msg.obj);
+
+
 
             }
             catch (JSONException e) {
@@ -59,6 +90,8 @@ public class BookSearchActivity extends AppCompatActivity {
             return false;
         }
     });
+
+*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +100,7 @@ public class BookSearchActivity extends AppCompatActivity {
         etSearch = findViewById(R.id.etSearch);
         btnCancel = findViewById(R.id.btnCancel);
         btnSearch = findViewById(R.id.btnSearch);
+        //String search = etSearch.getText().toString();
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,115 +109,48 @@ public class BookSearchActivity extends AppCompatActivity {
             }
         });
 
+        requestQueue = Volley.newRequestQueue(this);
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            String urlString = "https://kamorris.com/lab/cis3515/search.php?term=Great%20Expectations";
-                            URL url = new URL(urlString);
-                            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+                    String urlString = "https://kamorris.com/lab/cis3515/search.php?term=" +  etSearch.getText().toString();
 
-                            Message msg = Message.obtain();
-                            StringBuilder sb = new StringBuilder();
-                            String tmpString;
-
-                            while((tmpString = br.readLine()) != null){
-                                sb.append(tmpString);
+                    JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlString, null, new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            if (response.length() > 0) {
+                                //bookList.clear();
+                                for (int i = 0; i < response.length(); i++) {
+                                    try {
+                                        JSONObject bookJSON;
+                                        bookJSON = response.getJSONObject(i);
+                                        bookList.add(new Book (bookJSON.getString("title"),
+                                                bookJSON.getString("author"),
+                                                bookJSON.getInt("id"),
+                                                 bookJSON.getString("cover_url")));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
                             }
-                            msg.obj = sb.toString();
-                            handler.sendMessage(msg);
-                            // msg.obj = br.readLine();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }.start();
-                finish();
-            }
-        });
-        //Book book = new Book();
-
-
-/*
-        final EditText prompt = new EditText(this);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Search");
-        builder.setView(prompt);
-        //String search = prompt.getText().toString();
-        builder.setPositiveButton("Search", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                 new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            String urlString = "https://kamorris.com/lab/cis3515/search.php?term=Great%20Expectations";
-                            URL url = new URL(urlString);
-                            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-
-                            Message msg = Message.obtain();
-                            StringBuilder sb = new StringBuilder();
-                            String tmpString;
-
-                            while((tmpString = br.readLine()) != null){
-                                sb.append(tmpString);
+                            else {
                             }
-                            msg.obj = sb.toString();
-                            handler.sendMessage(msg);
-                           // msg.obj = br.readLine();
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            Intent launchIntent = new Intent(BookSearchActivity.this, MainActivity.class);
+                            launchIntent.putExtra("Books", bookList);
+                            startActivity(launchIntent);
                         }
-                    }
-                }.start();
-                finish();
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
 
-               // Intent launchIntent = new Intent(BookSearchActivity.this, BookListFragment.class);
-               // startActivity(launchIntent);
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-        AlertDialog promptDialog = builder.create();
-        promptDialog.show();
-
-        //btnSearch = findViewById(R.id.btnSearch);
-        //etSearch = findViewById(R.id.etSearch);
-*/
-/*
-        btnSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            URL url = new URL(btnSearch.getText().toString());
-                            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-
-                            Message msg = Message.obtain();
-                            msg.obj = br.readLine();
-
-
-                            handler.sendMessage(msg);
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
-                    }
-                }.start();
-            }
-        });
-    }
-*/
-
-
+                    });
+                    requestQueue.add(jsonArrayRequest);
+                };
+            });
+        }
     }
 
-}
+
+

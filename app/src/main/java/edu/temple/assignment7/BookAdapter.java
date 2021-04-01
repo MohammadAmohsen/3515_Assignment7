@@ -2,9 +2,12 @@ package edu.temple.assignment7;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -13,49 +16,51 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
-public class BookAdapter extends ArrayAdapter {
+public class BookAdapter extends BaseAdapter {
 
     Context context;
+    BookList books;
 
-    public BookAdapter(@NonNull Context context, int resource, @NonNull List objects) {
-        super(context, resource, objects);
+    public BookAdapter (Context context, BookList books) {
         this.context = context;
+        this.books = books;
+    }
+
+    @Override
+    public int getCount() {
+        return books.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return books.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return 0;
     }
 
 
-    @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        TextView textView;
-        TextView textViewAuthor;
-        LinearLayout ll;
-        if(convertView == null ){
-            textView = new TextView(context);
-            ll = new LinearLayout(context);
-            textView.setTextSize(22);
-            textView.setPadding(15,20,0,20);
+    public View getView(int position, View convertView, ViewGroup parent) {
+        TextView titleTextView, authorTextView;
+        ImageView imageView;
 
-            textViewAuthor = new TextView(context);
-            textViewAuthor.setTextSize(12);
-            textView.setTextColor(Color.GRAY);
-            textViewAuthor.setPadding(15,20,0,20);
-
-            ll.setOrientation(LinearLayout.VERTICAL);
-
-            ll.addView(textView);
-            ll.addView(textViewAuthor);
+        if (!(convertView instanceof LinearLayout)) {
+            /*
+            Inflate a predefined layout file that includes 2 text views.
+            We could do this in code, but this seems a little easier
+             */
+            convertView = LayoutInflater.from(context).inflate(R.layout.fragment_book_details, parent, false);
         }
-        else{
-            ll = (LinearLayout) convertView;
-            textView = (TextView) ll.getChildAt(0);
-            textViewAuthor = (TextView)ll.getChildAt(1);
 
+        titleTextView = convertView.findViewById(R.id.tvTitle);
+        authorTextView = convertView.findViewById(R.id.tvAuthor);
 
-        }
-       String title = ((Book)(getItem(position))).getTitle();
-        String author = ((Book)(getItem(position))).getAuthor();
-        textView.setText(title);
-        textViewAuthor.setText(author);
-        return ll;
+        titleTextView.setText(((Book) getItem(position)).getTitle());
+        authorTextView.setText(((Book) getItem(position)).getAuthor());
+
+        return convertView;
     }
 }

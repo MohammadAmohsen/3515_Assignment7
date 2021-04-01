@@ -1,43 +1,57 @@
 package edu.temple.assignment7;
 
+import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
 
-public class BookList extends ArrayList<Parcelable> {
-    private ArrayList<Book> BookList;
+public class BookList implements Parcelable {
+    private ArrayList<Book> books;
 
-    public BookList(){
-        BookList = new ArrayList<Book>();
+    public BookList() {
+        books = new ArrayList<>();
     }
 
-    public void add(Book book)
-    {
-        BookList.add(book);
+    protected BookList(Parcel in) {
+        books = in.createTypedArrayList(Book.CREATOR);
     }
 
-    public void remove(Book book)
-    {
-        BookList.remove(book);
+    public static final Parcelable.Creator<BookList> CREATOR = new Parcelable.Creator<BookList>() {
+        @Override
+        public BookList createFromParcel(Parcel in) {
+            return new BookList(in);
+        }
+
+        @Override
+        public BookList[] newArray(int size) {
+            return new BookList[size];
+        }
+    };
+
+    public void add(Book book) {
+        books.add(book);
     }
 
-    public Book get(int index)
-    {
-        return BookList.get(index);
+    public Book get(int position) {
+        return books.get(position);
     }
 
-    public int size()
-    {
-        return BookList.size();
+    public void remove(Book book){
+        books.remove(book);
     }
 
-    @NonNull
+    public int size() {
+        return books.size();
+    }
+
     @Override
-    public Stream<Parcelable> stream() {
-        return null;
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeTypedList(books);
     }
 }
+
