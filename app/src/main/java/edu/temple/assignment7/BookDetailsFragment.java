@@ -1,5 +1,8 @@
 package edu.temple.assignment7;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,7 +12,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 
 public class BookDetailsFragment extends Fragment {
 
@@ -46,8 +66,10 @@ public class BookDetailsFragment extends Fragment {
          View view = inflater.inflate(R.layout.fragment_book_details, container, false);
          tvTitle = view.findViewById(R.id.tvTitle);
          tvAuthor = view.findViewById(R.id.tvAuthor);
+        imageView =  view.findViewById(R.id.imageView);
 
-         if(book != null){
+
+        if(book != null){
              changeBook(book);
          }
 
@@ -57,6 +79,7 @@ public class BookDetailsFragment extends Fragment {
     void changeBook(Book book){
         tvTitle.setText(book.getTitle());
         tvAuthor.setText(book.getAuthor());
-        //imageView.setImageResource(Integer.valueOf(book.getCoverURL()));
-    }
+
+        Picasso.get().load(book.getCoverURL()).into(imageView);
+     }
 }

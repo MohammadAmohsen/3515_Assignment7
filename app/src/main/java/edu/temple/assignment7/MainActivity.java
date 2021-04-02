@@ -4,22 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements BookListFragment.BookListFragmentInterface {
     BookList bookList;
     boolean bookDetailsPresent;
-    Parcelable count;
+    //Parcelable count;
     BookDetailsFragment bookDetailsFragment;
     private final String KEY_SELECTED_BOOK = "selectedBook";
     Button btnSearch;
@@ -32,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         setContentView(R.layout.activity_main);
         bookList = new BookList();
         if (savedInstanceState != null) {
-            count = savedInstanceState.getParcelable(KEY_SELECTED_BOOK);
+            selectedBook = savedInstanceState.getParcelable(KEY_SELECTED_BOOK);
         }
 
         bookDetailsPresent = findViewById(R.id.mainActivityID2) != null;
@@ -42,15 +35,14 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         Fragment fragment1;
         fragment1 = fm.findFragmentById(R.id.mainActivityID);
 
-        // At this point, I only want to have BookListFragment be displayed in container_1
-        if (fragment1 instanceof BookDetailsFragment) {
+         if (fragment1 instanceof BookDetailsFragment) {
             fm.popBackStack();
         } else if (!(fragment1 instanceof BookListFragment))
             fm.beginTransaction()
                     .add(R.id.mainActivityID, BookListFragment.newInstance(bookList))
                     .commit();
 
-        btnSearch = findViewById(R.id.btnSearch);
+        btnSearch = findViewById(R.id.btnSearchMain);
 
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
@@ -58,9 +50,10 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
             public void onClick(View v) {
                 Intent launchIntent = new Intent(MainActivity.this, BookSearchActivity.class);
                 startActivity(launchIntent);
-
             }
         });
+
+        bookDetailsFragment = (selectedBook == null) ? new BookDetailsFragment() : BookDetailsFragment.newInstance(selectedBook);
 
         Intent intent = getIntent();
         if (bookDetailsPresent) {
@@ -89,46 +82,6 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
     }
 
-
-
-    /*
-    private void fetchBooks(String searchString) {
-        /*
-        A Volloy JSONArrayRequest will automatically convert a JSON Array response from
-        a web server to an Android JSONArray object
-
-
-        JSONArray jsonArrayRequest = new JSONArray(SEARCH_API + searchString, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                if (response.length() > 0) {
-                    //book.clear();
-                    for (int i = 0; i < response.length(); i++) {
-                        try {
-                            JSONObject bookJSON;
-                            bookJSON = response.getJSONObject(i);
-                            bookList.add(new Book (bookJSON.getInt(Book.JSON_ID),
-                                    bookJSON.getString(Book.JSON_TITLE),
-                                    bookJSON.getString(Book.JSON_AUTHOR),
-                                    bookJSON.getString(Book.JSON_COVER_URL)));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    //updateBooksDisplay();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-        requestQueue.add(jsonArrayRequest);
-    };
-
-
-     */
     @Override
     public void bookClicked(int position) {
         //Store the selected book to use later if activity restarts

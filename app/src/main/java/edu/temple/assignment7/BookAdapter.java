@@ -14,12 +14,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 public class BookAdapter extends BaseAdapter {
 
     Context context;
     BookList books;
+    Book b;
 
     public BookAdapter (Context context, BookList books) {
         this.context = context;
@@ -57,10 +60,11 @@ public class BookAdapter extends BaseAdapter {
 
         titleTextView = convertView.findViewById(R.id.tvTitle);
         authorTextView = convertView.findViewById(R.id.tvAuthor);
+        imageView = convertView.findViewById(R.id.imageView);
 
         titleTextView.setText(((Book) getItem(position)).getTitle());
         authorTextView.setText(((Book) getItem(position)).getAuthor());
-
+        Picasso.get().load(((Book) getItem(position)).getCoverURL()).into(imageView);
         return convertView;
     }
 }
