@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 
@@ -18,6 +20,8 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     Button btnSearch;
     FragmentManager fm;
     Book selectedBook;
+    int LAUNCH_SECOND_ACTIVITY = 1;
+    Intent testIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,23 +48,25 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
         btnSearch = findViewById(R.id.btnSearchMain);
 
-
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent launchIntent = new Intent(MainActivity.this, BookSearchActivity.class);
-                startActivity(launchIntent);
+                startActivityForResult(launchIntent, LAUNCH_SECOND_ACTIVITY );
             }
         });
 
         bookDetailsFragment = (selectedBook == null) ? new BookDetailsFragment() : BookDetailsFragment.newInstance(selectedBook);
 
+
         Intent intent = getIntent();
         if (bookDetailsPresent) {
+
             if (intent.hasExtra("Books")) {
                 Bundle extras = getIntent().getExtras();
                 bookList = extras.getParcelable(("Books"));
             }
+
             bookDetailsFragment = new BookDetailsFragment();
             getSupportFragmentManager()
                     .beginTransaction()
@@ -69,10 +75,12 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
         }
         else{
+
             if (intent.hasExtra("Books")) {
                 Bundle extras = getIntent().getExtras();
                 bookList = extras.getParcelable(("Books"));
             }
+
 
             getSupportFragmentManager()
                     .beginTransaction()
@@ -116,6 +124,36 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         selectedBook = null;
         super.onBackPressed();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+       // BookList bl = new BookList();
+
+        if (requestCode == LAUNCH_SECOND_ACTIVITY) {
+            if(resultCode == Activity.RESULT_OK){
+                testIntent = getIntent();
+                if (bookDetailsPresent) {
+                    Bundle extras = getIntent().getExtras();
+                    // bookList = extras.getParcelable(("Books"));
+                   // bl  = extras.getParcelable("Books");
+                    bookList = data.getParcelableExtra("Books");
+
+                }
+                else{
+                    Bundle extras = getIntent().getExtras();
+                // bookList = extras.getParcelable(("Books"));
+                   // bookList  = extras.getEx("Books");
+                    bookList = data.getParcelableExtra("Books");
+
+                }
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }//onActivityResult
 }
 
 

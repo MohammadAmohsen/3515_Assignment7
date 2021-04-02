@@ -9,13 +9,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
 
@@ -42,6 +47,8 @@ public class BookSearchActivity extends AppCompatActivity {
     int ID;
     Book book;
     Context c;
+
+
     Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
@@ -70,14 +77,14 @@ public class BookSearchActivity extends AppCompatActivity {
 
                  startActivity(launchIntent);
                 //b.get
-                /*
+
                // getSupportFragmentManager()
                        // .beginTransaction()
                        // .add(R.id.textView,BookListFragment.newInstance(bookList))
                       //  .commit();
 
                // textView.setText((String)msg.obj);
-                */
+
 
 
             } catch (JSONException e) {
@@ -86,6 +93,10 @@ public class BookSearchActivity extends AppCompatActivity {
             return false;
         }
     });
+
+
+
+
 
 
     @Override
@@ -104,15 +115,17 @@ public class BookSearchActivity extends AppCompatActivity {
                 finish();
             }
         });
+        //requestQueue = Volley.newRequestQueue(this);
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String urlString = "https://kamorris.com/lab/cis3515/search.php?term=" +  etSearch.getText().toString();
+
                 new Thread() {
                     @Override
                     public void run() {
                         try {
-
                             String urlString = "https://kamorris.com/lab/cis3515/search.php?term=" + etSearch.getText().toString();
                             URL url = new URL(urlString);
                             BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -145,13 +158,10 @@ public class BookSearchActivity extends AppCompatActivity {
                 // launchIntent.putExtra("CoverURL", b.getCoverURL());
 
 
-            }
-        });
-    }
-}
-        // String urlString = "https://kamorris.com/lab/cis3515/search.php?term=" +  etSearch.getText().toString();
-                    /*
-                    JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlString, null, new Response.Listener<JSONArray>() {
+                /*
+                requestQueue.add(new JsonArrayRequest(urlString, new Response.Listener<JSONArray>(){
+
+                    //JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlString, null, new Response.Listener<JSONArray>() {
                         @Override
                         public void onResponse(JSONArray response) {
                             if (response.length() > 0) {
@@ -172,17 +182,26 @@ public class BookSearchActivity extends AppCompatActivity {
                             else {
                             }
                             Intent launchIntent = new Intent(BookSearchActivity.this, MainActivity.class);
-                            launchIntent.putExtra("Books", bookList);
+                            launchIntent.putExtra("Books", (Parcelable)bookList);
+                           // setResult(RESULT_OK, launchIntent);
                             startActivity(launchIntent);
+                            finish();
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
 
                         }
-                    });
-                    requestQueue.add(jsonArrayRequest);
-                    */
+                    }));
+
+                 */
+
+                }
+
+
+        });
+    }
+}
 
 
 

@@ -89,5 +89,7 @@ public class Book implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
         dest.writeString(author);
+        dest.writeInt(id);
+        dest.writeString(cover_url);
     }
 }

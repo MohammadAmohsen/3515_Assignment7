@@ -80,6 +80,21 @@ public class BookDetailsFragment extends Fragment {
         tvTitle.setText(book.getTitle());
         tvAuthor.setText(book.getAuthor());
 
+        String url = book.getCoverURL();
+        String title = book.getTitle();
+        String author = book.getAuthor();
+
+        /*
+        if(title == "Great Expectations" && author == "Charles Dickens" ){
+            Picasso.get().load("https://images-na.ssl-images-amazon.com/images/I/51eKYoHi9jL.jpg").into(imageView);
+        }
+        else if(title == "The Island of Doctor Moreau" || author == "H. G. Wells" ){
+            Picasso.get().load("https://kamorris.com/lab/abp/covers/IslandOfDrMoreau.jpeg").into(imageView);
+        }
+
+         */
+
+
         Picasso.get().load(book.getCoverURL()).into(imageView);
      }
 }
