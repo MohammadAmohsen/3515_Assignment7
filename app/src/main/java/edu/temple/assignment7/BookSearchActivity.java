@@ -120,7 +120,7 @@ public class BookSearchActivity extends AppCompatActivity {
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String urlString = "https://kamorris.com/lab/cis3515/search.php?term=" +  etSearch.getText().toString();
+               // String urlString = "https://kamorris.com/lab/cis3515/search.php?term=" +  etSearch.getText().toString();
 
                 new Thread() {
                     @Override

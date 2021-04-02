@@ -48,7 +48,6 @@ public class BookAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         TextView titleTextView, authorTextView;
-        ImageView imageView;
 
         if (!(convertView instanceof LinearLayout)) {
             /*
@@ -60,11 +59,9 @@ public class BookAdapter extends BaseAdapter {
 
         titleTextView = convertView.findViewById(R.id.tvTitle);
         authorTextView = convertView.findViewById(R.id.tvAuthor);
-        imageView = convertView.findViewById(R.id.imageView);
 
         titleTextView.setText(((Book) getItem(position)).getTitle());
         authorTextView.setText(((Book) getItem(position)).getAuthor());
-        Picasso.get().load(((Book) getItem(position)).getCoverURL()).into(imageView);
         return convertView;
     }
 }

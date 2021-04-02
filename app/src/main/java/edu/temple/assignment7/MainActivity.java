@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity implements BookListFragment.BookListFragmentInterface {
     BookList bookList;
@@ -81,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
                 bookList = extras.getParcelable(("Books"));
             }
 
-
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.mainActivityID, BookListFragment.newInstance(bookList))
@@ -125,35 +125,6 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         super.onBackPressed();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-       // BookList bl = new BookList();
-
-        if (requestCode == LAUNCH_SECOND_ACTIVITY) {
-            if(resultCode == Activity.RESULT_OK){
-                testIntent = getIntent();
-                if (bookDetailsPresent) {
-                    Bundle extras = getIntent().getExtras();
-                    // bookList = extras.getParcelable(("Books"));
-                   // bl  = extras.getParcelable("Books");
-                    bookList = data.getParcelableExtra("Books");
-
-                }
-                else{
-                    Bundle extras = getIntent().getExtras();
-                // bookList = extras.getParcelable(("Books"));
-                   // bookList  = extras.getEx("Books");
-                    bookList = data.getParcelableExtra("Books");
-
-                }
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
-            }
-        }
-    }//onActivityResult
 }
 
 
