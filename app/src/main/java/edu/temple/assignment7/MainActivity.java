@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
         if (savedInstanceState != null) {
             selectedBook = savedInstanceState.getParcelable(KEY_SELECTED_BOOK);
+            this.bookList = bookList;
         }
 
         bookDetailsPresent = findViewById(R.id.mainActivityID2) != null;
@@ -120,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(KEY_SELECTED_BOOK, selectedBook);
+
     }
 
     @Override
