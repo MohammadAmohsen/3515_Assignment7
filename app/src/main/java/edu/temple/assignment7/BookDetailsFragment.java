@@ -33,7 +33,7 @@ import java.net.URL;
 
 public class BookDetailsFragment extends Fragment {
 
-    private static final String ARG_BookDetails = "param1";
+    private static final String ARG_BookDetails = "book";
 
     // TODO: Rename and change types of parameters
     private Book book;

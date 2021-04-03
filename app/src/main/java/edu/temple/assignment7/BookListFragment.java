@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class BookListFragment extends Fragment {
 
     private BookList books;
-    private static final String ARG_Book = "param1";
+    private static final String ARG_Book = "booklist";
     BookListFragmentInterface parentActivity;
 
 

@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements BookListFragment.BookListFragmentInterface {
     BookList bookList;
     boolean bookDetailsPresent;
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bookList = new BookList();
+
+
         if (savedInstanceState != null) {
             selectedBook = savedInstanceState.getParcelable(KEY_SELECTED_BOOK);
         }
@@ -53,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
             @Override
             public void onClick(View v) {
                 Intent launchIntent = new Intent(MainActivity.this, BookSearchActivity.class);
-                startActivityForResult(launchIntent, LAUNCH_SECOND_ACTIVITY );
+                startActivity(launchIntent);
             }
         });
 
@@ -75,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
                     .commit();
 
         }
-        else{
+        else {
 
             if (intent.hasExtra("Books")) {
                 Bundle extras = getIntent().getExtras();
