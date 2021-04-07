@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         setContentView(R.layout.activity_main);
         bookList = new BookList();
 
-
+        //test
         if (savedInstanceState != null) {
             selectedBook = savedInstanceState.getParcelable(KEY_SELECTED_BOOK);
             this.bookList = bookList;
