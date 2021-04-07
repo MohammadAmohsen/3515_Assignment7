@@ -5,14 +5,21 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
 import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 
 import java.util.ArrayList;
+
+import edu.temple.audiobookplayer.AudiobookService;
 
 public class MainActivity extends AppCompatActivity implements BookListFragment.BookListFragmentInterface {
     BookList bookList;
@@ -25,6 +32,29 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     Book selectedBook;
     int LAUNCH_SECOND_ACTIVITY = 1;
     Intent testIntent;
+    AudiobookService.MediaControlBinder mediaControlBinder;
+    boolean connected;
+    Handler mediaControlHandler;
+
+    ServiceConnection bookServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mediaControlBinder = (AudiobookService.MediaControlBinder) service;
+            mediaControlBinder.setProgressHandler(mediaControlHandler);
+            connected = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            connected = false;
+        }
+    };
+
+     SeekBar mediaSeekBar = findViewById(R.id.seekBar2);
+
+
+    private final String SEARCH_API = "https://kamorris.com/lab/abp/booksearch.php?search=";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
