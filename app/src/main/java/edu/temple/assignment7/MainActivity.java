@@ -23,9 +23,10 @@ import edu.temple.audiobookplayer.AudiobookService;
 
 public class MainActivity extends AppCompatActivity implements BookListFragment.BookListFragmentInterface {
     BookList bookList;
+    Book book;
     boolean bookDetailsPresent;
-    //Parcelable count;
     BookDetailsFragment bookDetailsFragment;
+    ControlFragment controlFragment;
     private final String KEY_SELECTED_BOOK = "selectedBook";
     Button btnSearch;
     FragmentManager fm;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     boolean connected;
     Handler mediaControlHandler;
 
+    /*
     ServiceConnection bookServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -54,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
 
     private final String SEARCH_API = "https://kamorris.com/lab/abp/booksearch.php?search=";
+
+     */
 
 
     @Override
@@ -79,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
             fm.popBackStack();
         } else if (!(fragment1 instanceof BookListFragment))
             fm.beginTransaction()
+                    .add(R.id.mainActivityID, ControlFragment.newInstance(book))
                     .add(R.id.mainActivityID, BookListFragment.newInstance(bookList))
                     .commit();
 
@@ -104,8 +109,10 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
             }
 
             bookDetailsFragment = new BookDetailsFragment();
+            controlFragment = new ControlFragment();
             getSupportFragmentManager()
                     .beginTransaction()
+                    .replace(R.id.mainActivityID2, controlFragment)
                     .replace(R.id.mainActivityID2, bookDetailsFragment)
                     .commit();
 
@@ -119,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
             getSupportFragmentManager()
                     .beginTransaction()
+                    .replace(R.id.mainActivityID, ControlFragment.newInstance(book))
                     .replace(R.id.mainActivityID, BookListFragment.newInstance(bookList))
                     .commit();
         }
