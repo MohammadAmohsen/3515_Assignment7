@@ -10,7 +10,9 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +42,8 @@ public class BookDetailsFragment extends Fragment {
     TextView tvTitle;
     TextView tvAuthor;
     ImageView imageView;
+
+
     public BookDetailsFragment() {
         // Required empty public constructor
     }
@@ -79,7 +83,8 @@ public class BookDetailsFragment extends Fragment {
     void changeBook(Book book){
         tvTitle.setText(book.getTitle());
         tvAuthor.setText(book.getAuthor());
-
         Picasso.get().load(book.getCoverURL()).into(imageView);
-     }
+      }
+
+
 }

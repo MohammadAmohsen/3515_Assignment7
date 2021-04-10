@@ -44,6 +44,7 @@ public class BookSearchActivity extends AppCompatActivity {
     String Title;
     String Author;
     String CoverURL;
+    int duration;
     int ID;
     Book book;
     Context c;
@@ -67,7 +68,8 @@ public class BookSearchActivity extends AppCompatActivity {
                         Title = jsonObject.getString("title");
                         Author = jsonObject.getString("author");
                         CoverURL = jsonObject.getString("cover_url");
-                        Book b = new Book(Title, Author, ID, CoverURL);
+                        duration = jsonObject.getInt("duration");
+                        Book b = new Book(Title, Author, ID, CoverURL, duration);
                        // bookList.add( new Book(Title, Author, ID, CoverURL));
                           bookList.add(b);
                 }

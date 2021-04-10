@@ -1,5 +1,6 @@
 package edu.temple.assignment7;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -8,9 +9,11 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
@@ -21,7 +24,7 @@ import java.util.ArrayList;
 
 import edu.temple.audiobookplayer.AudiobookService;
 
-public class MainActivity extends AppCompatActivity implements BookListFragment.BookListFragmentInterface {
+public class MainActivity extends AppCompatActivity implements BookListFragment.BookListFragmentInterface, ControlFragment.ControlFragmentInterface  {
     BookList bookList;
     Book book;
     boolean bookDetailsPresent;
@@ -31,18 +34,19 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     Button btnSearch;
     FragmentManager fm;
     Book selectedBook;
-    int LAUNCH_SECOND_ACTIVITY = 1;
-    Intent testIntent;
+    Handler mediaControlHandler;
+    int duration;
     AudiobookService.MediaControlBinder mediaControlBinder;
     boolean connected;
-    Handler mediaControlHandler;
+    SeekBar mediaSeekBar;
+    Uri bookUri;
 
-    /*
     ServiceConnection bookServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mediaControlBinder = (AudiobookService.MediaControlBinder) service;
             mediaControlBinder.setProgressHandler(mediaControlHandler);
+
             connected = true;
         }
 
@@ -52,12 +56,6 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         }
     };
 
-     SeekBar mediaSeekBar = findViewById(R.id.seekBar2);
-
-
-    private final String SEARCH_API = "https://kamorris.com/lab/abp/booksearch.php?search=";
-
-     */
 
 
     @Override
@@ -72,6 +70,39 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
             this.bookList = bookList;
         }
 
+        mediaControlHandler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(@NonNull Message msg) {
+                final AudiobookService.BookProgress bookProgress = (AudiobookService.BookProgress) msg.obj;
+                mediaSeekBar.setMax(duration);
+                if(mediaControlBinder.isPlaying()){
+                    mediaSeekBar.setProgress(bookProgress.getProgress());
+                    bookUri = bookProgress.getBookUri();
+                }
+                mediaSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        if(fromUser){
+                            mediaControlBinder.seekTo(progress);
+
+                        }
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+
+                    }
+                });
+                return false;
+            }
+        });
+
+
         bookDetailsPresent = findViewById(R.id.mainActivityID2) != null;
 
         fm = getSupportFragmentManager();
@@ -83,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
             fm.popBackStack();
         } else if (!(fragment1 instanceof BookListFragment))
             fm.beginTransaction()
-                    .add(R.id.mainActivityID, ControlFragment.newInstance(book))
                     .add(R.id.mainActivityID, BookListFragment.newInstance(bookList))
                     .commit();
 
@@ -112,9 +142,8 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
             controlFragment = new ControlFragment();
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.mainActivityID2, controlFragment)
                     .replace(R.id.mainActivityID2, bookDetailsFragment)
-                    .commit();
+                     .commit();
 
         }
         else {
@@ -126,8 +155,8 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.mainActivityID, ControlFragment.newInstance(book))
                     .replace(R.id.mainActivityID, BookListFragment.newInstance(bookList))
+                    .replace(R.id.submainActivityID, ControlFragment.newInstance(selectedBook))
                     .commit();
         }
 
@@ -169,6 +198,20 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         super.onBackPressed();
     }
 
+    @Override
+    public void playButtonClicked(int id) {
+
+    }
+
+    @Override
+    public void pauseButtonClicked(int id) {
+
+    }
+
+    @Override
+    public void stopButtonClicked(int id) {
+
+    }
 }
 
 
