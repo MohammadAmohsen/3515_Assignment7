@@ -2,6 +2,8 @@ package edu.temple.assignment7;
 
 import android.app.Notification;
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -14,6 +16,7 @@ import androidx.fragment.app.FragmentManager;
 
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,31 +43,17 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
     Button btnStop;
     SeekBar seekBar;
     boolean connected = true;
-    AudiobookService.MediaControlBinder mediaControlBinder;
-    Handler mediaControlHandler;
+    //AudiobookService.MediaControlBinder mediaControlBinder;
     BookList bookList;
-     BookDetailsFragment bookDetailsFragment;
-    Book selectedBook;
     int duration;
     private static final Boolean PAUSED = false;
+    ControlFragment controlFragment;
+    ControlFragmentInterface parentActivity;
+
+    private final ControlFragment.MediaControlBinder binder = new ControlFragment.MediaControlBinder();
 
     public ControlFragment() {
     }
-
-
-    ServiceConnection bookServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mediaControlBinder = (AudiobookService.MediaControlBinder) service;
-            mediaControlBinder.setProgressHandler(mediaControlHandler);
-            connected = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            connected = false;
-        }
-    };
 
     public static ControlFragment newInstance(Book book) {
         ControlFragment fragment = new ControlFragment();
@@ -96,10 +85,10 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
             @Override
             public void onClick(View v) {
                 if(connected){
-                    if(mediaControlBinder.isPlaying()){
-                        mediaControlBinder.pause();
+                    //if(mediaControlBinder.isPlaying()){
+                        //mediaControlBinder.pause();
                         //updatePlayStatus(bookDetailsFragment, PAUSED);
-                    }
+                    //}
                 }
             }
         });
@@ -107,30 +96,26 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(connected){
-                    if(mediaControlBinder.isPlaying()){
-                        mediaControlBinder.stop();
-                            //updatePlayStatus(bookDetailsFragment, PAUSED);
-                        }
-                }
+                //mediaControlBinder.stop();
+                //updatePlayStatus(bookDetailsFragment, PAUSED);
             }
         });
 
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(connected){
-                    if(!mediaControlBinder.isPlaying()){
-                        mediaControlBinder.play(2);
-                        //updatePlayStatus(bookDetailsFragment, PAUSED);
-                    }
+                //if(connected){
+                    //if(!mediaControlBinder.isPlaying()){
+                        parentActivity.playButtonClicked(book.getID());
+                    //updatePlayStatus(cf, true);
+                  //  }
+
+                //}
+                if(book != null){
+                    changeBook(book);
                 }
             }
         });
-
-        if(book != null){
-            changeBook(book);
-        }
 
         return view;
     }
@@ -139,22 +124,21 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
         textView.setText("Now Playing: " + book.getTitle());
     }
 
-    public void updatePlayStatus(BookDetailsFragment detailsFragment, boolean playing) {
-        if(playing) {
-            detailsFragment.tvTitle.setText("Now playing");
-            detailsFragment.tvTitle.append(selectedBook.getTitle());
-        }
-        else {
+/*
+    public void updatePlayStatus(ControlFragment detailsFragment, boolean playing) {
+            detailsFragment.textView.setText("Now playing");
+            detailsFragment.textView.append(book.getTitle());
 
-        }
     }
 
+ */
+
+
+
     public void bookSelected(int index) {
-        selectedBook = bookList.get(index);
-        duration = selectedBook.getDuration();
-
-            bookDetailsFragment.changeBook(selectedBook);
-
+        book = bookList.get(index);
+        duration = book.getDuration();
+        controlFragment.changeBook(book);
     }
 
     @Override
@@ -174,6 +158,20 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
 
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        /*
+         This fragment needs to communicate with its parent activity
+         so we verify that the activity implemented our defined interface
+         */
+        if (context instanceof BookListFragment.BookListFragmentInterface) {
+            parentActivity = (ControlFragment.ControlFragmentInterface) context;
+        } else {
+            throw new RuntimeException("Please implement the required interface(s)");
+        }
+    }
 
     private void playButtonClicked (int id){
 
@@ -184,6 +182,18 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
     }
 
     private void stopButtonClicked (int id){
+
+    }
+    public class MediaControlBinder extends Binder {
+        public void play(int id) {
+            ControlFragment.this.playButtonClicked(id);
+        }
+        public void pause(int id) {
+            ControlFragment.this.pauseButtonClicked(id);
+        }
+        public void stop(int id) {
+            ControlFragment.this.stopButtonClicked(id);
+        }
 
     }
 }
