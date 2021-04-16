@@ -50,7 +50,6 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
     ControlFragment controlFragment;
     ControlFragmentInterface parentActivity;
 
-    private final ControlFragment.MediaControlBinder binder = new ControlFragment.MediaControlBinder();
 
     public ControlFragment() {
     }
@@ -86,9 +85,9 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
             public void onClick(View v) {
                 if(connected){
                     //if(mediaControlBinder.isPlaying()){
-                        //mediaControlBinder.pause();
                         //updatePlayStatus(bookDetailsFragment, PAUSED);
                     //}
+                    parentActivity.pauseButtonClicked();
                 }
             }
         });
@@ -96,8 +95,8 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //mediaControlBinder.stop();
                 //updatePlayStatus(bookDetailsFragment, PAUSED);
+                parentActivity.stopButtonClicked();
             }
         });
 
@@ -153,8 +152,8 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
 
     interface ControlFragmentInterface{
         void playButtonClicked(int id);
-        void pauseButtonClicked(int id);
-        void stopButtonClicked(int id);
+        void pauseButtonClicked();
+        void stopButtonClicked();
 
     }
 
@@ -177,22 +176,22 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
 
     }
 
-    private void pauseButtonClicked (int id){
+    private void pauseButtonClicked (){
 
     }
 
-    private void stopButtonClicked (int id){
+    private void stopButtonClicked (){
 
     }
     public class MediaControlBinder extends Binder {
         public void play(int id) {
             ControlFragment.this.playButtonClicked(id);
         }
-        public void pause(int id) {
-            ControlFragment.this.pauseButtonClicked(id);
+        public void pause() {
+            ControlFragment.this.pauseButtonClicked();
         }
-        public void stop(int id) {
-            ControlFragment.this.stopButtonClicked(id);
+        public void stop( ) {
+            ControlFragment.this.stopButtonClicked();
         }
 
     }
