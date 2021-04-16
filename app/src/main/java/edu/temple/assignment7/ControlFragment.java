@@ -88,6 +88,10 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
                         //updatePlayStatus(bookDetailsFragment, PAUSED);
                     //}
                     parentActivity.pauseButtonClicked();
+
+                    if(book != null){
+                        pauseeBook(book);
+                    }
                 }
             }
         });
@@ -97,17 +101,21 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
             public void onClick(View v) {
                 //updatePlayStatus(bookDetailsFragment, PAUSED);
                 parentActivity.stopButtonClicked();
+
+                if(book != null){
+                    stopBook(book);
+                }
             }
         });
 
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //if(connected){
+                if(connected){
                     //if(!mediaControlBinder.isPlaying()){
                         parentActivity.playButtonClicked(book.getID());
                     //updatePlayStatus(cf, true);
-                  //  }
+                    }
 
                 //}
                 if(book != null){
@@ -122,7 +130,11 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
     void changeBook(Book book){
         textView.setText("Now Playing: " + book.getTitle());
     }
-
+    void stopBook(Book book){
+        textView.setText("Now Stopped: " + book.getTitle());
+    }    void pauseeBook(Book book){
+        textView.setText("Now Paused: " + book.getTitle());
+    }
 /*
     public void updatePlayStatus(ControlFragment detailsFragment, boolean playing) {
             detailsFragment.textView.setText("Now playing");
@@ -172,27 +184,4 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
         }
     }
 
-    private void playButtonClicked (int id){
-
-    }
-
-    private void pauseButtonClicked (){
-
-    }
-
-    private void stopButtonClicked (){
-
-    }
-    public class MediaControlBinder extends Binder {
-        public void play(int id) {
-            ControlFragment.this.playButtonClicked(id);
-        }
-        public void pause() {
-            ControlFragment.this.pauseButtonClicked();
-        }
-        public void stop( ) {
-            ControlFragment.this.stopButtonClicked();
-        }
-
-    }
 }

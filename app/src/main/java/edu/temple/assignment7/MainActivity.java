@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         public boolean handleMessage(@NonNull Message msg) {
             final AudiobookService.BookProgress bookProgress = (AudiobookService.BookProgress) msg.obj;
             mediaSeekBar =  findViewById(R.id.seekBar2);
-             mediaSeekBar.setMax(duration);
+            mediaSeekBar.setMax(duration);
             if(mediaControlBinder.isPlaying()){
                 mediaSeekBar.setProgress(bookProgress.getProgress());
                 bookUri = bookProgress.getBookUri();
@@ -132,12 +132,12 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
         //test
         if (savedInstanceState != null) {
-            selectedBook = savedInstanceState.getParcelable(KEY_SELECTED_BOOK);
+            //selectedBook = savedInstanceState.getParcelable(KEY_SELECTED_BOOK);
             this.bookList = bookList;
             //book = savedInstanceState.getParcelableArrayList(BOOKS_KEY);
-            //selectedBook = savedInstanceState.getParcelable(SELECTED_BOOK_KEY);
-          //  playStatus = savedInstanceState.getBoolean(PLAY_STATUS);
-            //duration = savedInstanceState.getInt(DURATION);
+            selectedBook = savedInstanceState.getParcelable(SELECTED_BOOK_KEY);
+          // playStatus = savedInstanceState.getBoolean(PLAY_STATUS);
+            duration = savedInstanceState.getInt(DURATION);
         }
 
         //Intent audiobookPlayer = new Intent(MainActivity.this, AudiobookService.class);
@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(KEY_SELECTED_BOOK, selectedBook);
-
+        outState.putInt(DURATION, duration);
     }
 
     @Override
@@ -303,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     @Override
     public void stopButtonClicked() {
         mediaControlBinder.stop();
-
+        mediaSeekBar.setProgress(0);
     }
 }
 
