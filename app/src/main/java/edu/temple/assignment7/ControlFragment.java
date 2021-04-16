@@ -87,7 +87,7 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
                     //if(mediaControlBinder.isPlaying()){
                         //updatePlayStatus(bookDetailsFragment, PAUSED);
                     //}
-                    parentActivity.pauseButtonClicked();
+                    parentActivity.pauseButtonClicked(book.getID());
 
                     if(book != null){
                         pauseeBook(book);
@@ -100,7 +100,7 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
             @Override
             public void onClick(View v) {
                 //updatePlayStatus(bookDetailsFragment, PAUSED);
-                parentActivity.stopButtonClicked();
+                parentActivity.stopButtonClicked(book.getID());
 
                 if(book != null){
                     stopBook(book);
@@ -123,6 +123,8 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
                 }
             }
         });
+
+
 
         return view;
     }
@@ -164,8 +166,8 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
 
     interface ControlFragmentInterface{
         void playButtonClicked(int id);
-        void pauseButtonClicked();
-        void stopButtonClicked();
+        void pauseButtonClicked(int id);
+        void stopButtonClicked(int id);
 
     }
 
