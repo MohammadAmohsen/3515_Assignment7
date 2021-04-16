@@ -92,17 +92,18 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             final AudiobookService.BookProgress bookProgress = (AudiobookService.BookProgress) msg.obj;
-//            mediaSeekBar.setMax(duration);
+            mediaSeekBar =  findViewById(R.id.seekBar2);
+             mediaSeekBar.setMax(duration);
             if(mediaControlBinder.isPlaying()){
-               // mediaSeekBar.setProgress(bookProgress.getProgress());
-              //  bookUri = bookProgress.getBookUri();
+                mediaSeekBar.setProgress(bookProgress.getProgress());
+                bookUri = bookProgress.getBookUri();
             }
-            /*
+
             mediaSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     if(fromUser){
-                    //    mediaControlBinder.seekTo(progress);
+                        mediaControlBinder.seekTo(progress);
 
                     }
                 }
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
                 }
             });
 
-             */
+
             return false;
         }
     });
@@ -261,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
             //if((mediaControlBinder.isPlaying() && bookPlayingId != id) || (!mediaControlBinder.isPlaying() && bookPlayingId != id)){
                 //controlFragment.btnStop.callOnClick();
                 startService(bindIntent);
+                duration = selectedBook.getDuration();
                 mediaControlBinder.setProgressHandler(mediaControlHandler);
                 mediaControlBinder.play(id);
                 playWasClicked = true;
