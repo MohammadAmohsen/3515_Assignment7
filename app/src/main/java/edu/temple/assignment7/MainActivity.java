@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     private static final String SELECTED_BOOK_KEY = "selectedBook";
     private static final String SEEKBAR_VALUE = "seek_progress";
     private static final String DURATION = "duration";
-
+    //
     BookList bookList;
     Book book;
     boolean bookDetailsPresent;
