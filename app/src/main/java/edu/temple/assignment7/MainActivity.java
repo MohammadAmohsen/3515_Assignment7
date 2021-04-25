@@ -10,6 +10,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +22,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 
 import edu.temple.audiobookplayer.AudiobookService;
@@ -29,7 +35,8 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     private static final String SELECTED_BOOK_KEY = "selectedBook";
     private static final String SEEKBAR_VALUE = "seek_progress";
     private static final String DURATION = "duration";
-    //
+    private static final String POSITION_VALUE = "pause_progress";
+
     BookList bookList;
     Book book;
     boolean bookDetailsPresent;
@@ -47,6 +54,13 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     Uri bookUri;
     Intent bindIntent;
     boolean playWasClicked;
+    int position;
+    int pausePosition;
+    boolean paused;
+    File file;
+    String fileName = "fileName";
+    SharedPreferences sharedPreferences;
+
 
 
     ServiceConnection bookServiceConnection = new ServiceConnection() {
@@ -89,9 +103,17 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
             mediaSeekBar =  findViewById(R.id.seekBar2);
             mediaSeekBar.setMax(duration);
             if(mediaControlBinder.isPlaying()){
-                progress = selectedBook.getDuration();
-                mediaSeekBar.setProgress(bookProgress.getProgress());
-                bookUri = bookProgress.getBookUri();
+                if(!paused) {
+                    progress = duration;
+                    mediaSeekBar.setProgress(bookProgress.getProgress());
+                    bookUri = bookProgress.getBookUri();
+                    pausePosition = bookProgress.getProgress();
+                }
+                 else if(paused){
+                    progress = duration;
+                    mediaSeekBar.setProgress(pausePosition);
+                    bookUri = bookProgress.getBookUri();
+                 }
             }
 
             mediaSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -120,11 +142,14 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bookList = new BookList();
+        file = new File(getFilesDir(), fileName);
+        sharedPreferences = getPreferences(MODE_PRIVATE);
 
         if (savedInstanceState != null) {
             selectedBook = savedInstanceState.getParcelable(KEY_SELECTED_BOOK);
             duration = savedInstanceState.getInt(DURATION);
             progress = savedInstanceState.getInt(SEEKBAR_VALUE);
+            pausePosition = savedInstanceState.getInt(POSITION_VALUE);
         }
 
         bookDetailsPresent = findViewById(R.id.mainActivityID2) != null;
@@ -217,6 +242,8 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         outState.putParcelable(KEY_SELECTED_BOOK, selectedBook);
         outState.putInt(DURATION, duration);
         outState.putInt(SEEKBAR_VALUE, progress);
+        outState.putInt(POSITION_VALUE, position);
+
     }
 
     @Override
@@ -227,6 +254,29 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
     @Override
     public void playButtonClicked(int id) {
+
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    String urlString = "https://kamorris.com/lab/audlib/download.php?id=" + selectedBook.getID();
+                    URL url = new URL(urlString);
+                    BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+
+                    FileOutputStream outputStream = new FileOutputStream((file));
+                    outputStream.write(url.toString().getBytes());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+
+        // setContentView(R.layout.activity_main);
+        //count++;
+        finish();
+
+
         if(connected){
                 startService(bindIntent);
                 duration = selectedBook.getDuration();
@@ -238,6 +288,8 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
     @Override
     public void pauseButtonClicked(int id) {
+        paused = true;
+        position = pausePosition - 10;
         mediaControlBinder.pause();
 
     }

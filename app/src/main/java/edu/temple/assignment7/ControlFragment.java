@@ -49,7 +49,7 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
     private static final Boolean PAUSED = false;
     ControlFragment controlFragment;
     ControlFragmentInterface parentActivity;
-
+    File file;
 
     public ControlFragment() {
     }
@@ -100,6 +100,7 @@ public class ControlFragment extends Fragment implements MediaPlayer.OnPreparedL
             @Override
             public void onClick(View v) {
                 //updatePlayStatus(bookDetailsFragment, PAUSED);
+
                 parentActivity.stopButtonClicked(book.getID());
 
                 if(book != null){

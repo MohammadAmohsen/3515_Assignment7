@@ -153,51 +153,6 @@ public class BookSearchActivity extends AppCompatActivity {
                 //count++;
                 finish();
 
-                // Intent launchIntent = new Intent(BookSearchActivity.this, MainActivity.class);
-                //launchIntent.putExtra("Title", b.getTitle());
-                // launchIntent.putExtra("Author", b.getAuthor());
-                // launchIntent.putExtra("ID", b.getID());
-                // launchIntent.putExtra("CoverURL", b.getCoverURL());
-
-
-                /*
-                requestQueue.add(new JsonArrayRequest(urlString, new Response.Listener<JSONArray>(){
-
-                    //JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlString, null, new Response.Listener<JSONArray>() {
-                        @Override
-                        public void onResponse(JSONArray response) {
-                            if (response.length() > 0) {
-                                //bookList.clear();
-                                for (int i = 0; i < response.length(); i++) {
-                                    try {
-                                        JSONObject bookJSON;
-                                        bookJSON = response.getJSONObject(i);
-                                        bookList.add(new Book (bookJSON.getString("title"),
-                                                bookJSON.getString("author"),
-                                                bookJSON.getInt("id"),
-                                                 bookJSON.getString("cover_url")));
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                            else {
-                            }
-                            Intent launchIntent = new Intent(BookSearchActivity.this, MainActivity.class);
-                            launchIntent.putExtra("Books", (Parcelable)bookList);
-                           // setResult(RESULT_OK, launchIntent);
-                            startActivity(launchIntent);
-                            finish();
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-
-                        }
-                    }));
-
-                 */
-
                 }
 
 
