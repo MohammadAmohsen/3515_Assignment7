@@ -12,7 +12,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -22,16 +24,20 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 import edu.temple.audiobookplayer.AudiobookService;
 
-public class MainActivity extends AppCompatActivity implements BookListFragment.BookListFragmentInterface, ControlFragment.ControlFragmentInterface  {
+public class MainActivity extends AppCompatActivity implements BookListFragment.BookListFragmentInterface, ControlFragment.ControlFragmentInterface {
     private static final String SELECTED_BOOK_KEY = "selectedBook";
     private static final String SEEKBAR_VALUE = "seek_progress";
     private static final String DURATION = "duration";
@@ -46,8 +52,8 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     Button btnSearch;
     FragmentManager fm;
     Book selectedBook;
-     int duration;
-     int progress;
+    int duration;
+    int progress;
     AudiobookService.MediaControlBinder mediaControlBinder;
     boolean connected;
     SeekBar mediaSeekBar;
@@ -60,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     File file;
     String fileName = "fileName";
     SharedPreferences sharedPreferences;
-
+    private static String file_url = "https://kamorris.com/lab/audlib/download.php?id=";
 
 
     ServiceConnection bookServiceConnection = new ServiceConnection() {
@@ -100,26 +106,25 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             final AudiobookService.BookProgress bookProgress = (AudiobookService.BookProgress) msg.obj;
-            mediaSeekBar =  findViewById(R.id.seekBar2);
+            mediaSeekBar = findViewById(R.id.seekBar2);
             mediaSeekBar.setMax(duration);
-            if(mediaControlBinder.isPlaying()){
-                if(!paused) {
+            if (mediaControlBinder.isPlaying()) {
+                if (!paused) {
                     progress = duration;
                     mediaSeekBar.setProgress(bookProgress.getProgress());
                     bookUri = bookProgress.getBookUri();
                     pausePosition = bookProgress.getProgress();
-                }
-                 else if(paused){
+                } else if (paused) {
                     progress = duration;
                     mediaSeekBar.setProgress(pausePosition);
                     bookUri = bookProgress.getBookUri();
-                 }
+                }
             }
 
             mediaSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    if(fromUser){
+                    if (fromUser) {
                         mediaControlBinder.seekTo(progress);
                     }
                 }
@@ -159,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         Fragment fragment1;
         fragment1 = fm.findFragmentById(R.id.mainActivityID);
 
-         if (fragment1 instanceof BookDetailsFragment) {
+        if (fragment1 instanceof BookDetailsFragment) {
             fm.popBackStack();
         } else if (!(fragment1 instanceof BookListFragment))
             fm.beginTransaction()
@@ -196,8 +201,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
                     .replace(R.id.mainActivityID2, BookDetailsFragment.newInstance(selectedBook))
                     .replace(R.id.subContainerButton, ControlFragment.newInstance(selectedBook))
                     .commit();
-        }
-        else {
+        } else {
 
             if (intent.hasExtra("Books")) {
                 Bundle extras = getIntent().getExtras();
@@ -226,8 +230,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
                     .replace(R.id.subContainerButton, ControlFragment.newInstance(selectedBook))
                     .addToBackStack(null)
                     .commit();
-        }
-        else {
+        } else {
             fm.beginTransaction()
                     .replace(R.id.mainActivityID, BookDetailsFragment.newInstance(selectedBook))
                     .replace(R.id.submainActivityID, ControlFragment.newInstance(selectedBook))
@@ -254,35 +257,13 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
     @Override
     public void playButtonClicked(int id) {
-
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    String urlString = "https://kamorris.com/lab/audlib/download.php?id=" + selectedBook.getID();
-                    URL url = new URL(urlString);
-                    BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-
-                    FileOutputStream outputStream = new FileOutputStream((file));
-                    outputStream.write(url.toString().getBytes());
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
-
-        // setContentView(R.layout.activity_main);
-        //count++;
-        finish();
-
-
-        if(connected){
-                startService(bindIntent);
-                duration = selectedBook.getDuration();
-                mediaControlBinder.setProgressHandler(mediaControlHandler);
-                mediaControlBinder.play(id);
-                playWasClicked = true;
+        if (connected) {
+            doInBackground(file_url + selectedBook.getID());
+            startService(bindIntent);
+            duration = selectedBook.getDuration();
+            mediaControlBinder.setProgressHandler(mediaControlHandler);
+            mediaControlBinder.play(id);
+            playWasClicked = true;
         }
     }
 
@@ -299,4 +280,71 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         mediaControlBinder.stop();
         mediaSeekBar.setProgress(0);
     }
+
+    protected String doInBackground(String... f_url) {
+        int count;
+        try {
+            URL url = new URL(f_url[0]);
+            URLConnection connection = url.openConnection();
+            connection.connect();
+
+            // this will be useful so that you can show a tipical 0-100%
+            // progress bar
+            int lenghtOfFile = connection.getContentLength();
+
+            // download the file
+            InputStream input = new BufferedInputStream(url.openStream(),
+                    8192);
+
+            // Output stream
+            OutputStream output = new FileOutputStream(Environment
+                    .getExternalStorageDirectory().toString()
+                    + "/2011.kml");
+
+            byte data[] = new byte[1024];
+
+            long total = 0;
+
+            while ((count = input.read(data)) != -1) {
+                total += count;
+                // publishing the progress....
+                // After this onProgressUpdate will be called
+
+                // writing data to file
+                output.write(data, 0, count);
+            }
+
+            // flushing output
+            output.flush();
+
+            // closing streams
+            output.close();
+            input.close();
+
+        } catch (Exception e) {
+        }
+
+        return null;
+    }
+
+    /*
+    class DownloadFileFromURL extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            return null;
+        }
+
+        /**
+         * Before starting background thread Show Progress Bar Dialog
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+    }
+
+     */
+
 }
+
